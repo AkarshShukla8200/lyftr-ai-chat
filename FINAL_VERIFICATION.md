@@ -115,12 +115,15 @@ Invoke-RestMethod "$B/sessions/<paste-session-id>/messages" | ConvertTo-Json -De
 
 **Upload:** YouTube **Unlisted**, or Google Drive with **"Anyone with the link – Viewer"**. Open the link in an incognito window to confirm it plays without login.
 
-## 7. After recording: clear the deployed cache
+## 7. After recording: deployed cache cleared
 
-Graders' first requests (including the PDF's example message) should return `LIVE_INFERENCE`. On Render Free a restart wipes `/data` (cache and SQLite):
-- Render dashboard → `lyftr-chat-backend` → **Manual Deploy** → **Restart service** (menu entry checked on 2026-11-24; **Deploy latest commit** also works).
-- After it's live, call only `/health`.
-- Record here when this was done: **PENDING (after video)**.
+Graders' first requests (including the PDF's example message) should return `LIVE_INFERENCE`, so the deployed cache was cleared after the video was recorded.
+
+- **19:07 IST, Render "Manual Deploy → Restart service":** this did **not** wipe `/data`. A session created at about 17:06 was still readable afterwards (`GET /sessions/M-1795520261/messages` → 200). So on Render Free a restart keeps the container's files; my earlier assumption that it wipes them was wrong.
+- **19:08 IST, Render "Manual Deploy → Deploy latest commit" (8ddc07c, backend code unchanged):** this builds a fresh container. At 19:09:33 the same session returned **404**, so `/data` (SQLite and the LiteLLM cache directory) is empty.
+- **Afterwards I called only `/health`** → `{"status":"ok","keys_configured":2,"cache_enabled":true}`, plus the read-only history check above. No `/chat` request was sent, so the cache is empty for graders.
+
+To repeat this later: Render → `lyftr-chat-backend` → **Manual Deploy → Deploy latest commit**, then call only `/health`. The cache also empties by itself when the free instance spins down after 15 minutes idle and is redeployed.
 
 ## 8. Submission text
 
@@ -128,7 +131,9 @@ Graders' first requests (including the PDF's example message) should return `LIV
 Frontend:  https://lyftr-ai-chat-six.vercel.app
 Backend:   https://lyftr-chat-backend-spyc.onrender.com
 GitHub:    https://github.com/AkarshShukla8200/lyftr-ai-chat
-Demo:      PENDING (public, no-login link)
+Demo:      https://drive.google.com/file/d/1Apwqd6NEdap9HLiVeq4qmqHkE_Lo19KF/view?usp=sharing
 ```
 
-**Status: NOT ready to submit** until the demo video link exists and is public, README section 5 names your editor, and the deployed cache has been cleared after recording.
+**Public-link check (anonymous requests, no cookies, 2026-11-24 19:10 IST):** frontend 200 "Lyftr Chat", backend `/health` 200, GitHub 200, Drive video 200 "lyftr_ai_proj.mp4". None redirected to a login page.
+
+**Status: READY TO SUBMIT.** All mandatory deliverables exist and are public, and the README has no PENDING items. Submit the four URLs above through the assignment's Submission Form before your 24-hour deadline.

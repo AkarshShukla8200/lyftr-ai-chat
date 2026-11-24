@@ -11,7 +11,7 @@ Status values: TODO / IN PROGRESS / PASS (with real evidence) / BLOCKED (with re
 | 3 | SQLite only for storage (no Redis/Postgres) | PDF §2 Storage | `backend/app/db.py` | code review, compose has no other services | PASS: compose has only backend + frontend; SQLite file on volume |
 | 4 | LiteLLM gateway, exact pinned version (not 1.82.7 / 1.82.8 / 1.107.0) | PDF §2, Pack | `backend/requirements.txt` | `pip show litellm` | PASS: litellm==1.108.4 pinned (not 1.82.7/1.82.8/1.107.0) |
 | **§1 Objective** |||||
-| 5 | Working full-stack app, deployed live | PDF §1 | all | public URLs smoke test | PASS: live at https://lyftr-ai-chat-six.vercel.app + https://lyftr-chat-backend-spyc.onrender.com |
+| 5 | Working full-stack app, deployed live | PDF §1 | all | public URLs smoke test | PASS: live + connected; cache cleared after recording |
 | 6 | AI model integration keeping conversation context | PDF §1 | `backend/app/chat_service.py` | multi-turn test | IN PROGRESS: live model call works; multi-turn tested with mocks |
 | 7 | Keeps working when an API key fails | PDF §1 | `backend/app/llm_gateway.py` | failover tests | PASS (mocked failover) + both live keys verified |
 | 8 | Speed/cost improved by caching | PDF §1 | `backend/app/llm_gateway.py` | cache tests | PASS: live 1873 ms → cache 177 ms (2026-11-24) |
@@ -78,15 +78,15 @@ Status values: TODO / IN PROGRESS / PASS (with real evidence) / BLOCKED (with re
 | 61 | Makefile with `up`, `down` | PDF §6 | `Makefile` | real run | PASS: up/down; portable (make built-ins only); verified under PowerShell and Git Bash sh; missing .env → clear message, exit 2 |
 | 62 | All configuration via env vars | PDF §6 | `config.py`, `.env.example` | code review | PASS: all config via env (.env / compose environment / build arg) |
 | **§7 Deliverables** |||||
-| 63 | Submit within 24 h; every URL public, no login | PDF §7 | — | incognito checks | IN PROGRESS: frontend, backend, repo public; video pending |
-| 64 | 2–3 min voice demo of deployed app: all endpoints, cache hit, failover via header | PDF §7 | user records | public link check | TODO (user) |
+| 63 | Submit within 24 h; every URL public, no login | PDF §7 | — | incognito checks | PASS: all four URLs anonymous 200 (19:10 IST) |
+| 64 | 2–3 min voice demo of deployed app: all endpoints, cache hit, failover via header | PDF §7 | user records | public link check | PASS: Drive "Anyone with the link" video, anonymous 200 |
 | 65 | Repo structure: `/backend`, `/frontend`, `docker-compose.yml`, `Makefile`, `.env.example`, `README.md` | PDF §7 | repo root | `ls` | PASS: /backend, /frontend, docker-compose.yml, Makefile, .env.example present (README in Prompt 7) |
 | 66 | Backend tests included | PDF §7 | `backend/tests/` | pytest | PASS: 145 backend tests |
 | 67 | Env vars `LLM_API_KEYS`, `DATABASE_URL`, `ALLOWED_ORIGINS`, `ENABLE_FAILURE_SIMULATION` (+ others) | PDF §7 | `config.py` | tests | PASS |
 | 68 | `.env.example` lists every variable with placeholders; no real keys in repo | PDF §7 | `.env.example`, `.gitignore` | `git grep` for key prefixes | PASS: .env.example lists every variable; scan of 50 to-be-committed files + both images: 0 real keys, 0 key patterns, no .env |
 | 69 | Public GitHub repo | PDF §7 | — | incognito | PASS: public, owner AkarshShukla8200 |
 | **README (PDF p6)** |||||
-| 70 | Six headings in order: Live URLs; Run locally (Docker and without); Design decisions; Verification; Setup Used; Bonus features | PDF p6 | `README.md` | review | IN PROGRESS: six numbered headings; video URL + editor pending |
+| 70 | Six headings in order: Live URLs; Run locally (Docker and without); Design decisions; Verification; Setup Used; Bonus features | PDF p6 | `README.md` | review | PASS: six headings, real URLs, editor answered, no PENDING |
 | **§8 Rubric (10 pts)** |||||
 | 71 | System resilience: fallback on 429/quota/5xx incl. via header; clean 503; correct 422; no crashes | PDF §8 | rows 15, 35–39, 46–50 | — | TODO |
 | 72 | Caching accuracy: labels, identical replies, hits faster | PDF §8 | rows 17, 40–45 | — | TODO |

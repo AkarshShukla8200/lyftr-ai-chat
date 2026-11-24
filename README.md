@@ -24,7 +24,7 @@ Model: `gemini/gemini-3.5-flash-lite`. Two Gemini API keys from **two separate G
 | Frontend | https://lyftr-ai-chat-six.vercel.app |
 | Backend | https://lyftr-chat-backend-spyc.onrender.com (try `/health`) |
 | GitHub repository | https://github.com/AkarshShukla8200/lyftr-ai-chat |
-| Demo video (public, no login) | PENDING |
+| Demo video (public, no login) | https://drive.google.com/file/d/1Apwqd6NEdap9HLiVeq4qmqHkE_Lo19KF/view?usp=sharing |
 
 The backend runs on Render's free plan. It sleeps after 15 minutes without traffic, so the first request after that takes about a minute while it wakes up, and the UI shows a "server waking up" hint. See the persistence note in section 3.
 
@@ -258,7 +258,7 @@ On PowerShell 7 you can also use `Invoke-RestMethod ... -SkipHttpErrorCheck -Sta
 ## 5. Setup Used: your editor and AI tools
 
 - **AI tools:** Claude Code (Anthropic) in the Claude desktop app, used for implementation, tests, verification and documentation, directed and reviewed by me.
-- **Editor:** PENDING
+- **Editor:** none used separately. All code was written, edited and run through Claude Code; I directed, reviewed and tested each step.
 - **Environment:** Windows 11, PowerShell 5.1, Docker Desktop 28.1, GNU make 4.4.1 (winget `ezwinports.make`), Python 3.13, Node 24.
 
 ## 6. Bonus features (if any): what you added beyond the requirements and why
