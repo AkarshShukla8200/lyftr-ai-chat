@@ -1,0 +1,14 @@
+# Direct runtime dependencies (source for the hash-locked requirements.txt).
+# Regenerate the lock:  pip-compile --generate-hashes --strip-extras --allow-unsafe -o requirements.txt requirements.in
+# litellm: 1.82.7, 1.82.8 and 1.107.0 were malicious releases - never use them.
+litellm==1.108.4
+fastapi==0.165.0
+starlette==1.10.0
+pydantic==2.14.4
+uvicorn==0.54.0
+diskcache==5.6.3
+# Required by LiteLLM's cache-HIT code path (every sync cache hit imports
+# litellm.llms.anthropic.pass_through -> litellm.proxy.*). Both come from
+# LiteLLM's own "proxy" extra; without them every cache hit is a 500.
+orjson==3.13.0
+soundfile==0.14.0
