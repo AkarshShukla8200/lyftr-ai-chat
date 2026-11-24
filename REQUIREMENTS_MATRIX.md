@@ -11,7 +11,7 @@ Status values: TODO / IN PROGRESS / PASS (with real evidence) / BLOCKED (with re
 | 3 | SQLite only for storage (no Redis/Postgres) | PDF §2 Storage | `backend/app/db.py` | code review, compose has no other services | PASS: compose has only backend + frontend; SQLite file on volume |
 | 4 | LiteLLM gateway, exact pinned version (not 1.82.7 / 1.82.8 / 1.107.0) | PDF §2, Pack | `backend/requirements.txt` | `pip show litellm` | PASS: litellm==1.108.4 pinned (not 1.82.7/1.82.8/1.107.0) |
 | **§1 Objective** |||||
-| 5 | Working full-stack app, deployed live | PDF §1 | all | public URLs smoke test | TODO |
+| 5 | Working full-stack app, deployed live | PDF §1 | all | public URLs smoke test | PASS: live at https://lyftr-ai-chat-six.vercel.app + https://lyftr-chat-backend-spyc.onrender.com |
 | 6 | AI model integration keeping conversation context | PDF §1 | `backend/app/chat_service.py` | multi-turn test | IN PROGRESS: live model call works; multi-turn tested with mocks |
 | 7 | Keeps working when an API key fails | PDF §1 | `backend/app/llm_gateway.py` | failover tests | PASS (mocked failover) + both live keys verified |
 | 8 | Speed/cost improved by caching | PDF §1 | `backend/app/llm_gateway.py` | cache tests | PASS: live 1873 ms → cache 177 ms (2026-11-24) |
@@ -31,9 +31,9 @@ Status values: TODO / IN PROGRESS / PASS (with real evidence) / BLOCKED (with re
 | 19 | DB under Docker volume `/data/app.db` via `DATABASE_URL`; survives restarts | PDF §2 | compose named volume; `config.py` | `make down`/`make up` persistence check | PASS (Docker): /data/app.db on named volume; history + cache survived make down/up |
 | 20 | Schema auto-created on startup; `messages` table exactly as given (extra tables/indexes allowed) | PDF §2 | `db.py init_db()` | test | PASS (unit): schema + index + sessions table, WAL |
 | **§2 Deployment** |||||
-| 21 | Frontend deployed & public | PDF §2, §7 | host TBD | incognito check | TODO |
-| 22 | Backend deployed & running | PDF §2, §7 | host TBD | `/health` public | TODO |
-| 23 | Both tiers connected via live URLs; backend allows frontend origin | PDF §2, §5 | `ALLOWED_ORIGINS`, `VITE_API_BASE_URL` | browser test + CORS preflight | TODO |
+| 21 | Frontend deployed & public | PDF §2, §7 | host TBD | incognito check | PASS: Vercel production domain public (anonymous 200) |
+| 22 | Backend deployed & running | PDF §2, §7 | host TBD | `/health` public | PASS: Render free, health 200 |
+| 23 | Both tiers connected via live URLs; backend allows frontend origin | PDF §2, §5 | `ALLOWED_ORIGINS`, `VITE_API_BASE_URL` | browser test + CORS preflight | PASS: bundle has backend URL; ALLOWED_ORIGINS = exact Vercel origin only; live UI chat works |
 | **§3 API contract** |||||
 | 24 | Exactly three endpoints; no docs/openapi/`/` | PDF §3, Pack | `backend/app/main.py` | test: `/docs` `/redoc` `/openapi.json` `/` → 404 | PASS (unit): /docs /redoc /openapi.json / → 404 JSON |
 | 25 | `GET /health` → 200 `{"status":"ok","keys_configured":N,"cache_enabled":true}` only when DB reachable + keys loaded (+ cache on); else 503 | PDF §3, Pack | `main.py` | tests | PASS (unit + live): 200 {"status":"ok","keys_configured":2,"cache_enabled":true} |
@@ -60,7 +60,7 @@ Status values: TODO / IN PROGRESS / PASS (with real evidence) / BLOCKED (with re
 | **§4 Failover test hook** |||||
 | 46 | `X-Simulate-Failure` header: comma-separated `key_id=status`, `*` = all; statuses 429/500/502/503 | PDF §4 | `backend/app/simulation.py` | tests | PASS (tests + live): parser; 429/500/502/503; `*`; whitespace; unknown keys ignored; malformed → 422 |
 | 47 | Effect request-scoped only | PDF §4 | per-request object, no global state | concurrency test | PASS (tests): 12 concurrent mixed requests, no leakage; no global state |
-| 48 | Honored only when `ENABLE_FAILURE_SIMULATION=true`; set on deployed backend | PDF §4 | `config.py`; host env | tests + deployed check | PASS (tests): flag must be exactly "true" (false/""/True/TRUE/1/yes/" true" ignored); deployed setting pending Prompt 7 |
+| 48 | Honored only when `ENABLE_FAILURE_SIMULATION=true`; set on deployed backend | PDF §4 | `config.py`; host env | tests + deployed check | PASS: ENABLE_FAILURE_SIMULATION=true on Render; key_1=429/500 → key_2 live |
 | 49 | `key_1=429` → 200 key_2; `key_1=500` → 200 key_2; `*=429` → 503, nothing in history | PDF §4 | gateway | tests (also after cache warm — Pack) | PASS (tests + live 2026-11-24): key_1=429 → key_2/1; key_1=500 → key_2/1; *=429 → 503 + history 404; also after cache warm |
 | 50 | Simulated request returns a real answer, never error wrapped in 200 | PDF §4 | gateway | test | PASS (tests + live): real reply from key_2, provider never called for simulated key |
 | **§5 Frontend contract** |||||
@@ -78,21 +78,21 @@ Status values: TODO / IN PROGRESS / PASS (with real evidence) / BLOCKED (with re
 | 61 | Makefile with `up`, `down` | PDF §6 | `Makefile` | real run | PASS: up/down; portable (make built-ins only); verified under PowerShell and Git Bash sh; missing .env → clear message, exit 2 |
 | 62 | All configuration via env vars | PDF §6 | `config.py`, `.env.example` | code review | PASS: all config via env (.env / compose environment / build arg) |
 | **§7 Deliverables** |||||
-| 63 | Submit within 24 h; every URL public, no login | PDF §7 | — | incognito checks | TODO |
+| 63 | Submit within 24 h; every URL public, no login | PDF §7 | — | incognito checks | IN PROGRESS: frontend, backend, repo public; video pending |
 | 64 | 2–3 min voice demo of deployed app: all endpoints, cache hit, failover via header | PDF §7 | user records | public link check | TODO (user) |
 | 65 | Repo structure: `/backend`, `/frontend`, `docker-compose.yml`, `Makefile`, `.env.example`, `README.md` | PDF §7 | repo root | `ls` | PASS: /backend, /frontend, docker-compose.yml, Makefile, .env.example present (README in Prompt 7) |
 | 66 | Backend tests included | PDF §7 | `backend/tests/` | pytest | PASS: 145 backend tests |
 | 67 | Env vars `LLM_API_KEYS`, `DATABASE_URL`, `ALLOWED_ORIGINS`, `ENABLE_FAILURE_SIMULATION` (+ others) | PDF §7 | `config.py` | tests | PASS |
 | 68 | `.env.example` lists every variable with placeholders; no real keys in repo | PDF §7 | `.env.example`, `.gitignore` | `git grep` for key prefixes | PASS: .env.example lists every variable; scan of 50 to-be-committed files + both images: 0 real keys, 0 key patterns, no .env |
-| 69 | Public GitHub repo | PDF §7 | — | incognito | TODO (user) |
+| 69 | Public GitHub repo | PDF §7 | — | incognito | PASS: public, owner AkarshShukla8200 |
 | **README (PDF p6)** |||||
-| 70 | Six headings in order: Live URLs; Run locally (Docker and without); Design decisions; Verification; Setup Used; Bonus features | PDF p6 | `README.md` | review | TODO |
+| 70 | Six headings in order: Live URLs; Run locally (Docker and without); Design decisions; Verification; Setup Used; Bonus features | PDF p6 | `README.md` | review | IN PROGRESS: six numbered headings; video URL + editor pending |
 | **§8 Rubric (10 pts)** |||||
 | 71 | System resilience: fallback on 429/quota/5xx incl. via header; clean 503; correct 422; no crashes | PDF §8 | rows 15, 35–39, 46–50 | — | TODO |
 | 72 | Caching accuracy: labels, identical replies, hits faster | PDF §8 | rows 17, 40–45 | — | TODO |
 | 73 | Token usage tracking shown with each reply in UI | PDF §8 | rows 18, 31, 54 | — | PASS (local): per-reply tokens in UI; equal cached tokens 25/14 |
 | 74 | Multi-turn state: remembers, sessions separate, SQLite, history endpoint correct | PDF §8 | rows 13, 34 | — | TODO |
-| 75 | Full-stack deployment live, connected, contract; `make up` works | PDF §8 | rows 21–23, 58 | — | IN PROGRESS: local make up PASS; deployment pending |
+| 75 | Full-stack deployment live, connected, contract; `make up` works | PDF §8 | rows 21–23, 58 | — | PASS: live, connected, contract; make up works |
 | 76 | Code quality, security, docs: LiteLLM for caching and fallback, multi-stage Dockerfiles, working Makefile, complete README | PDF §8 | rows 4, 59, 61, 70 | — | TODO |
 
 ## Ambiguities and chosen behaviour (conservative)

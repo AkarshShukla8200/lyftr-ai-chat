@@ -21,9 +21,9 @@ Model: `gemini/gemini-3.5-flash-lite`. Two Gemini API keys from **two separate G
 
 | What | URL |
 |---|---|
-| Frontend | PENDING |
-| Backend | PENDING |
-| GitHub repository | PENDING |
+| Frontend | https://lyftr-ai-chat-six.vercel.app |
+| Backend | https://lyftr-chat-backend-spyc.onrender.com (try `/health`) |
+| GitHub repository | https://github.com/AkarshShukla8200/lyftr-ai-chat |
 | Demo video (public, no login) | PENDING |
 
 The backend runs on Render's free plan. It sleeps after 15 minutes without traffic, so the first request after that takes about a minute while it wakes up, and the UI shows a "server waking up" hint. See the persistence note in section 3.
