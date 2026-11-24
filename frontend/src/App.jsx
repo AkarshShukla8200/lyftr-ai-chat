@@ -79,7 +79,7 @@ export default function App() {
           <p className="header__sub">Multi-key LLM gateway with response caching</p>
         </div>
         <p className="header__session" title="A new session starts on every page load">
-          Session <code>{sessionId.slice(0, 10)}…</code>
+          Session <code className="header__session-id">{sessionId}</code>
         </p>
       </header>
 

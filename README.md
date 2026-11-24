@@ -143,7 +143,7 @@ The cache is configured as `litellm.cache = Cache(type="disk", disk_cache_dir=LL
   - `resolution_source = "LLM_CACHE"`, `key_id = null`, `fallback_attempts = 0`;
   - the reply text is identical;
   - the tokens are the usage stored with the cached response.
-  - Hits are typically about 150–230 ms, versus 1.2–1.9 s for live calls.
+  - Measured: cache hits took 5–230 ms when the backend was warm (up to about 1 s right after a free-tier wake-up). Live calls took 1.2–1.9 s, and up to about 8 s during a cold start.
 - **Simulation bypass:** a request with an active `X-Simulate-Failure` header is sent with `cache={"no-cache": True, "no-store": True}`. A test proves that, on the installed version, `no-cache` skips the lookup (the provider *is* called) but would still overwrite the stored entry. `no-store` prevents that overwrite. So a simulated request can never be answered from cache, and it cannot change the cache either.
 - **Empty replies:** LiteLLM caches empty replies too (proven by a test). If a cache hit is empty, the gateway asks the provider again with the lookup skipped, and the fresh reply replaces the bad entry. Otherwise that prompt would return 503 forever.
 - **Extra dependencies:** every cache hit in LiteLLM 1.103–1.110 imports part of LiteLLM's proxy package, which needs `orjson` and `soundfile`. Both are pinned. The full `litellm[proxy]` extra (about 50 packages) is avoided.
